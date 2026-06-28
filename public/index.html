@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대만신 · AI 프리미엄 종합 사주</title>
+  <meta name="description" content="만년을 살아온 영험한 대만신이 봐주는 AI 프리미엄 종합 사주 리포트. 생년월일시와 성별만 입력하면 13단계 종합 운세를 한 번에." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #f7f5ff;
+      --ink: #1f1a2e;
+      --muted: #6b6680;
+      --line: #ece8f7;
+      --primary: #6c4cf1;
+      --primary-dark: #553bd0;
+      --primary-soft: #efeaff;
+      --gold: #c9a227;
+      --error: #d6336c;
+      --success: #2f9e44;
+      --shadow: 0 18px 50px rgba(76, 52, 161, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 500px at 50% -200px, #f0ebff 0%, rgba(255,255,255,0) 70%),
+        var(--bg);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== Top nav ===== */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(140%) blur(8px);
+      background: rgba(255,255,255,0.82);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
+    .brand .moon { font-size: 20px; }
+    .btn-inquiry {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 16px; border-radius: 999px;
+      background: var(--primary-soft); color: var(--primary-dark);
+      font-weight: 700; font-size: 14px;
+      border: 1px solid #ded5ff; transition: all .15s;
+    }
+    .btn-inquiry:hover { background: var(--primary); color: #fff; }
+
+    /* ===== Hero ===== */
+    .hero { max-width: 900px; margin: 0 auto; padding: 56px 20px 20px; text-align: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--bg-soft); border: 1px solid var(--line);
+      color: var(--primary-dark); font-weight: 700; font-size: 13px; margin-bottom: 18px;
+    }
+    .hero h1 { font-size: 34px; line-height: 1.25; letter-spacing: -0.03em; margin: 0 0 14px; font-weight: 800; }
+    .hero h1 .grad {
+      background: linear-gradient(90deg, var(--primary), #9a7bff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p { color: var(--muted); font-size: 16px; margin: 0 auto; max-width: 540px; }
+
+    /* ===== Card / form ===== */
+    .wrap { max-width: 900px; margin: 0 auto; padding: 20px 20px 80px; }
+    .card {
+      background: #fff; border: 1px solid var(--line);
+      border-radius: 22px; box-shadow: var(--shadow); padding: 30px 26px;
+    }
+    .card h2 { margin: 0 0 4px; font-size: 19px; }
+    .card .sub { margin: 0 0 22px; color: var(--muted); font-size: 14px; }
+
+    .field { margin-bottom: 18px; }
+    .label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+    .req { color: var(--primary); }
+    input[type="text"], textarea, select {
+      width: 100%; padding: 12px 13px; font-size: 15px; font-family: inherit;
+      border: 1px solid #ddd6ee; border-radius: 12px; background: #fff; color: var(--ink);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(108,76,241,.14);
+    }
+    textarea { resize: vertical; min-height: 88px; }
+
+    .row { display: flex; gap: 10px; }
+    .row > * { flex: 1; }
+
+    /* gender toggle */
+    .seg { display: flex; gap: 10px; }
+    .seg label {
+      flex: 1; cursor: pointer; text-align: center;
+      padding: 12px; border: 1px solid #ddd6ee; border-radius: 12px;
+      font-weight: 700; color: var(--muted); transition: all .15s; user-select: none;
+    }
+    .seg input { display: none; }
+    .seg input:checked + span { color: var(--primary-dark); }
+    .seg label:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-dark); }
+
+    .check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); margin-top: 8px; }
+    .check input { width: 16px; height: 16px; accent-color: var(--primary); }
+
+    .submit {
+      width: 100%; margin-top: 6px; padding: 15px; border: none; border-radius: 14px;
+      font-size: 16.5px; font-weight: 800; color: #fff; cursor: pointer;
+      background: linear-gradient(90deg, var(--primary), #8a6bff);
+      box-shadow: 0 10px 24px rgba(108,76,241,.32); transition: transform .12s, box-shadow .12s, opacity .15s;
+    }
+    .submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(108,76,241,.4); }
+    .submit:disabled { opacity: .6; cursor: not-allowed; }
+
+    .disclaimer { margin-top: 14px; text-align: center; color: #a39fb3; font-size: 12px; }
+
+    /* ===== Result ===== */
+    #result { margin-top: 26px; display: none; }
+    #result.show { display: block; }
+    .result-head {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+      font-weight: 800; font-size: 18px;
+    }
+    .result-body {
+      background: #fff; border: 1px solid var(--line); border-radius: 22px;
+      box-shadow: var(--shadow); padding: 28px 26px; font-size: 15.5px;
+    }
+    .result-body h2 { font-size: 19px; margin: 26px 0 10px; padding-bottom: 8px; border-bottom: 2px solid var(--primary-soft); color: var(--primary-dark); }
+    .result-body h2:first-child { margin-top: 0; }
+    .result-body h3 { font-size: 16.5px; margin: 18px 0 8px; }
+    .result-body strong { color: var(--primary-dark); }
+    .result-body ul { padding-left: 20px; }
+    .result-body li { margin: 4px 0; }
+    .result-body p { margin: 10px 0; }
+    .result-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    .result-body th, .result-body td { border: 1px solid var(--line); padding: 8px 10px; text-align: center; }
+    .result-body th { background: var(--bg-soft); }
+
+    .typing { display: inline-block; width: 8px; height: 18px; background: var(--primary); margin-left: 2px; border-radius: 2px; animation: blink 1s steps(2) infinite; vertical-align: text-bottom; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .loading { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 15px; padding: 6px 2px; }
+    .spinner { width: 22px; height: 22px; border: 3px solid var(--primary-soft); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .errbox { background: #fff0f3; color: var(--error); border: 1px solid #ffd6e1; border-radius: 14px; padding: 14px 16px; font-size: 14px; }
+
+    footer { text-align: center; color: #b3aec2; font-size: 12.5px; padding: 0 20px 50px; }
+
+    @media (max-width: 560px) {
+      .hero { padding-top: 40px; }
+      .hero h1 { font-size: 27px; }
+      .card, .result-body { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/"><span class="moon">🌙</span> 대만신 사주</a>
+      <a class="btn-inquiry" href="/inquiry.html">🤝 제휴문의</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <span class="chip">✨ 만년을 살아온 영험한 신령</span>
+    <h1>AI 만신이 봐주는<br /><span class="grad">프리미엄 종합 사주</span></h1>
+    <p>생년월일시와 성별만 알려다오. 명식부터 평생 운세까지, 13단계 리포트를 한 번에 풀어주마.</p>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="formCard">
+      <h2>🔮 내 사주 정보 입력</h2>
+      <p class="sub">정확한 양력 생년월일과 태어난 시간을 넣을수록 풀이가 깊어진단다.</p>
+
+      <form id="sajuForm">
+        <div class="field">
+          <label class="label">이름 <span style="color:var(--muted);font-weight:500;">(선택)</span></label>
+          <input type="text" id="name" placeholder="예) 홍길동" autocomplete="name" />
+        </div>
+
+        <div class="field">
+          <label class="label">성별 <span class="req">*</span></label>
+          <div class="seg">
+            <label><input type="radio" name="gender" value="female" checked /><span>여자</span></label>
+            <label><input type="radio" name="gender" value="male" /><span>남자</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">양력 생년월일 <span class="req">*</span></label>
+          <div class="row">
+            <select id="year" required></select>
+            <select id="month" required></select>
+            <select id="day" required></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">태어난 시간</label>
+          <div class="row">
+            <select id="hour"></select>
+            <select id="minute"></select>
+          </div>
+          <label class="check"><input type="checkbox" id="unknownTime" /> 태어난 시간을 몰라요 (시주 제외)</label>
+        </div>
+
+        <div class="field">
+          <label class="label">관심사 · 추가 질문 <span style="color:var(--muted);font-weight:500;">(선택)</span></label>
+          <textarea id="concern" placeholder="예) 올해 이직을 고민 중이에요. 재물운과 직업운이 궁금합니다."></textarea>
+        </div>
+
+        <button type="submit" class="submit" id="submitBtn">🪬 내 사주 한 번에 풀이받기</button>
+        <p class="disclaimer">본 결과는 AI가 명리학 원리를 바탕으로 생성한 참고·오락용 콘텐츠입니다.</p>
+      </form>
+    </section>
+
+    <section id="result">
+      <div class="result-head">📜 <span>대만신의 종합 사주 리포트</span></div>
+      <div class="result-body" id="resultBody"></div>
+    </section>
+  </main>
+
+  <footer>© 대만신 사주 · AI 기반 운세 서비스 · 재미로 보는 참고용</footer>
+
+  <script>
+    // ----- 옵션 채우기 -----
+    const yearSel = document.getElementById("year");
+    const monthSel = document.getElementById("month");
+    const daySel = document.getElementById("day");
+    const hourSel = document.getElementById("hour");
+    const minSel = document.getElementById("minute");
+
+    const nowYear = new Date().getFullYear();
+    for (let y = nowYear; y >= 1930; y--) yearSel.add(new Option(y + "년", y));
+    for (let m = 1; m <= 12; m++) monthSel.add(new Option(m + "월", m));
+    function fillDays() {
+      const y = +yearSel.value, m = +monthSel.value;
+      const last = new Date(y, m, 0).getDate();
+      const cur = +daySel.value || 1;
+      daySel.innerHTML = "";
+      for (let d = 1; d <= last; d++) daySel.add(new Option(d + "일", d));
+      daySel.value = Math.min(cur, last);
+    }
+    yearSel.value = 1995; monthSel.value = 1; fillDays();
+    yearSel.addEventListener("change", fillDays);
+    monthSel.addEventListener("change", fillDays);
+
+    hourSel.add(new Option("시 (선택)", ""));
+    for (let h = 0; h < 24; h++) hourSel.add(new Option(String(h).padStart(2, "0") + "시", h));
+    minSel.add(new Option("분 (선택)", ""));
+    for (let mi = 0; mi < 60; mi += 5) minSel.add(new Option(String(mi).padStart(2, "0") + "분", mi));
+
+    const unknown = document.getElementById("unknownTime");
+    unknown.addEventListener("change", () => {
+      hourSel.disabled = unknown.checked;
+      minSel.disabled = unknown.checked;
+    });
+
+    // ----- 아주 가벼운 마크다운 렌더러 -----
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+    function renderMarkdown(md) {
+      const lines = md.split("\n");
+      let html = "", inList = false, inTable = false;
+      const closeList = () => { if (inList) { html += "</ul>"; inList = false; } };
+      const closeTable = () => { if (inTable) { html += "</table>"; inTable = false; } };
+      const inline = (t) => escapeHtml(t)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/(?<!\*)\*(?!\s)(.+?)(?<!\s)\*(?!\*)/g, "<em>$1</em>");
+      for (let raw of lines) {
+        const line = raw.replace(/\s+$/, "");
+        if (/^\s*\|.*\|\s*$/.test(line)) {
+          const cells = line.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+          if (/^[-:\s|]+$/.test(line.replace(/\|/g, ""))) continue; // 구분선 스킵
+          if (!inTable) { closeList(); html += "<table>"; inTable = true; }
+          const tag = "td";
+          html += "<tr>" + cells.map(c => `<${tag}>${inline(c)}</${tag}>`).join("") + "</tr>";
+          continue;
+        } else { closeTable(); }
+        let m;
+        if ((m = line.match(/^###\s+(.*)/))) { closeList(); html += `<h3>${inline(m[1])}</h3>`; }
+        else if ((m = line.match(/^##\s+(.*)/))) { closeList(); html += `<h2>${inline(m[1])}</h2>`; }
+        else if ((m = line.match(/^#\s+(.*)/))) { closeList(); html += `<h2>${inline(m[1])}</h2>`; }
+        else if ((m = line.match(/^\s*[-*]\s+(.*)/))) {
+          if (!inList) { html += "<ul>"; inList = true; }
+          html += `<li>${inline(m[1])}</li>`;
+        } else if (line.trim() === "") { closeList(); }
+        else { closeList(); html += `<p>${inline(line)}</p>`; }
+      }
+      closeList(); closeTable();
+      return html;
+    }
+
+    // ----- 제출 -----
+    const form = document.getElementById("sajuForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const result = document.getElementById("result");
+    const resultBody = document.getElementById("resultBody");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "🔮 만신이 천기를 읽는 중...";
+      result.classList.add("show");
+      resultBody.innerHTML = '<div class="loading"><div class="spinner"></div> 만신이 그대의 명식을 세우고 있단다...</div>';
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      const payload = {
+        name: document.getElementById("name").value,
+        gender: document.querySelector('input[name="gender"]:checked').value,
+        year: +yearSel.value, month: +monthSel.value, day: +daySel.value,
+        unknownTime: unknown.checked,
+        hour: unknown.checked ? null : (hourSel.value === "" ? null : +hourSel.value),
+        minute: unknown.checked ? null : (minSel.value === "" ? 0 : +minSel.value),
+        concern: document.getElementById("concern").value,
+      };
+
+      try {
+        const res = await fetch("/api/saju", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok || !res.body) {
+          let msg = "풀이를 받아오지 못했단다. 잠시 후 다시 시도해 다오.";
+          try { const j = await res.json(); if (j.error) msg = j.error; } catch {}
+          resultBody.innerHTML = `<div class="errbox">⚠️ ${msg}</div>`;
+          return;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "", full = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const parts = buffer.split("\n");
+          buffer = parts.pop();
+          for (const part of parts) {
+            const line = part.trim();
+            if (!line.startsWith("data:")) continue;
+            const dataStr = line.slice(5).trim();
+            if (dataStr === "[DONE]") continue;
+            try {
+              const obj = JSON.parse(dataStr);
+              if (obj.response) {
+                full += obj.response;
+                resultBody.innerHTML = renderMarkdown(full) + '<span class="typing"></span>';
+              }
+            } catch {}
+          }
+        }
+        resultBody.innerHTML = renderMarkdown(full) || '<div class="errbox">⚠️ 받은 내용이 없구나. 다시 시도해 다오.</div>';
+      } catch (err) {
+        resultBody.innerHTML = `<div class="errbox">⚠️ 네트워크 오류가 났단다. 연결을 확인하고 다시 시도해 다오.</div>`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "🪬 내 사주 한 번에 풀이받기";
+      }
+    });
+  </script>
+</body>
+</html>
